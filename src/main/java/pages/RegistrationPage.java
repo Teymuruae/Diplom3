@@ -1,11 +1,11 @@
 package pages;
 
-import org.openqa.selenium.By;
+import io.qameta.allure.Step;
+import io.qameta.allure.junit4.DisplayName;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -15,7 +15,7 @@ public class RegistrationPage {
 
     private WebDriver driver;
 
-    public RegistrationPage(WebDriver driver){
+    public RegistrationPage(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }
@@ -39,32 +39,48 @@ public class RegistrationPage {
     @FindBy(xpath = "//p[@class = 'input__error text_type_main-default']")
     private WebElement incorrectPasswordMessage;
 
-    public void h2TextWait(){
-        new WebDriverWait(driver, Duration.ofSeconds(6))
+    @FindBy(xpath = "//a[@class = 'Auth_link__1fOlj']")
+    private WebElement loginButton;
+
+    public void h2TextWait() {
+        new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOf(h2RegistrationText));
     }
 
-    public WebElement getIncorrectPasswordMessage(){
+    public WebElement getIncorrectPasswordMessage() {
         return incorrectPasswordMessage;
     }
-    public void fillNameField(String name){
+
+    @Step
+    public void fillNameField(String name) {
         nameField.sendKeys(name);
 
     }
 
-    public void fillEmailField(String email){
+    @Step
+    public void fillEmailField(String email) {
         emailField.sendKeys(email);
     }
 
-    public void fillPasswordField(String password){
+    @Step
+    public void fillPasswordField(String password) {
         passwordField.sendKeys(password);
     }
 
-    public void pressRegistrationButton(){
+    @Step
+    public void pressRegistrationButton() {
         registrationButton.click();
     }
 
-    public void userRegistration(String name, String email, String password){
+    @Step
+    public void pressLoginButton() {
+        waitBeforeClick(loginButton);
+        loginButton.click();
+    }
+
+    @Step
+    @DisplayName("registration in account")
+    public void userRegistration(String name, String email, String password) {
         h2TextWait();
         fillNameField(name);
         fillEmailField(email);
@@ -72,5 +88,10 @@ public class RegistrationPage {
         pressRegistrationButton();
     }
 
+    public void waitBeforeClick(WebElement element) {
+        new WebDriverWait(driver, Duration.ofSeconds(8))
+                .until(ExpectedConditions.elementToBeClickable(element));
 
+
+    }
 }

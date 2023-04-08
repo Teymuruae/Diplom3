@@ -1,0 +1,8 @@
+pages\Header.class
+pages\LoginPage.class
+pages\PasswordRecoveryPage.class
+utils\Url.class
+utils\Randomizer.class
+pages\RegistrationPage.class
+pages\UserAccountPage.class
+pages\MainPage.class

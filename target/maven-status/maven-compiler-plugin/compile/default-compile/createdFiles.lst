@@ -1,0 +1,10 @@
+browsers\Browsers.class
+pages\Header.class
+pages\LoginPage.class
+pages\PasswordRecoveryPage.class
+utils\Url.class
+utils\Randomizer.class
+pages\RegistrationPage.class
+pages\UserAccountPage.class
+browsers\ChooseBrowser.class
+pages\MainPage.class

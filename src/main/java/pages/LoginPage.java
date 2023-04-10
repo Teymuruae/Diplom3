@@ -1,6 +1,7 @@
 package pages;
 
 import io.qameta.allure.Step;
+import io.qameta.allure.junit4.DisplayName;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -47,7 +48,9 @@ public class LoginPage {
                 .until(ExpectedConditions.visibilityOf(h2VhodText));
     }
 
+
     @Step
+    @DisplayName("fill Email Field")
     public void fillEmailField(String name) {
         new WebDriverWait(driver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.elementToBeClickable(emailField));
@@ -56,20 +59,32 @@ public class LoginPage {
 
 
     @Step
+    @DisplayName("fill Password Field")
     public void fillPasswordField(String password) {
         passwordField.sendKeys(password);
     }
 
     @Step
+    @DisplayName("click Enter Button in login page")
+
     public void clickEnterButton() {
+        waitBeforeClick(enterButton);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
         enterButton.click();
     }
 
     @Step
+    @DisplayName("user full login")
     public void login(String email, String password) {
         waitTextVhod();
         fillEmailField(email);
         fillPasswordField(password);
         clickEnterButton();
+    }
+
+    public void waitBeforeClick(WebElement element) {
+        new WebDriverWait(driver, Duration.ofSeconds(15))
+                .until(ExpectedConditions.elementToBeClickable(element));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
     }
 }

@@ -1,43 +1,37 @@
 package stellarburgertests;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
+import api.UserMethods;
+import browsers.Browsers;
+import browsers.ChooseBrowser;
+import io.restassured.response.ValidatableResponse;
+import org.apache.http.HttpStatus;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import pages.*;
 import utils.Randomizer;
 import utils.Url;
 
-@RunWith(Parameterized.class)
+import java.time.Duration;
+
+
 public class UserLoginTest {
     private static WebDriver driver;
-    private String switcher;
-    private LoginPage loginPage;
-    private MainPage mainPage;
+    private static LoginPage loginPage;
+    private static MainPage mainPage;
     private PasswordRecoveryPage passwordRecoveryPage;
     private static RegistrationPage registrationPage;
     private static String email;
     private static String password;
     private UserAccountPage userAccountPage;
+    private static String token;
+    private static ValidatableResponse createUserResponse;
+    private static UserMethods userMethods;
 
-    public UserLoginTest(String switcher) {
-        this.switcher = switcher;
-    }
-
-    @Parameterized.Parameters
-    public static Object[][] setData() {
-        return new Object[][]{
-
-                {"MainPage"},
-                {"MainPage2"},
-                {"PasswordRecoveryPage"},
-                {"RegistrationPage"}
-        };
-    }
 
     public void setUp() {
         driver = new ChromeDriver();
@@ -47,59 +41,76 @@ public class UserLoginTest {
         registrationPage = new RegistrationPage(driver);
         userAccountPage = new UserAccountPage(driver);
 
-        switch (switcher) {
-            case "MainPage":
-                driver.get(Url.getMainPageUrl());
-
-                mainPage.waitH1Text();
-                mainPage.clickEnterInAccountButton();
-                break;
-            case "MainPage2":
-                driver.get(Url.getMainPageUrl());
-
-                mainPage.waitH1Text();
-                mainPage.clickPersonalAccountLink();
-                break;
-            case "PasswordRecoveryPage":
-                driver.get(Url.getRecoveryPasswordPageUrl());
-
-                passwordRecoveryPage.waitForH2Text();
-                passwordRecoveryPage.clickEnterAccountLink();
-                break;
-            case "RegistrationPage":
-                driver.get(Url.getRegistrationPageUrl());
-
-                registrationPage.h2TextWait();
-                registrationPage.pressLoginButton();
-                break;
-        }
-        loginPage.login(email, password);
-
     }
 
     @BeforeClass
     public static void before() {
-        driver = new ChromeDriver();
-        driver.get(Url.getRegistrationPageUrl());
         email = Randomizer.getRandomEmail();
         password = Randomizer.getText();
-        registrationPage = new RegistrationPage(driver);
-        registrationPage.userRegistration(Randomizer.getText(), email, password);
-        driver.quit();
+        userMethods = new UserMethods();
+
+        createUserResponse = userMethods.createUser(email, password, Randomizer.getText(), HttpStatus.SC_OK);
+        token = createUserResponse.extract().path("accessToken");
+    }
+
+    @AfterClass
+    public static void clear() {
+        userMethods = new UserMethods();
+        userMethods.deleteUser(token, HttpStatus.SC_ACCEPTED);
     }
 
 
     @Test
-    public void loginUserInYandexBrowserTest() {
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\barat\\Documents\\YandexDriver\\yandexdriver.exe");
+    public void loginUserFromMainPageClickButtonTest() {
+        ChooseBrowser.initBrowser(Browsers.YANDEX);
         setUp();
+        driver.get(Url.getMainPageUrl());
+
+        mainPage.waitH1Text();
+        mainPage.clickEnterInAccountButton();
+        loginPage.login(email, password);
 
     }
 
     @Test
-    public void loginUserInChromeBrowserTest() {
-        WebDriverManager.chromedriver().setup();
+    public void loginUserFromMainPageClickLinkTest() {
+        ChooseBrowser.initBrowser(Browsers.YANDEX);
         setUp();
+        driver.get(Url.getMainPageUrl());
+
+        mainPage.waitH1Text();
+        mainPage.clickPersonalAccountLink();
+        loginPage.login(email, password);
+
+    }
+
+    @Test
+    public void loginUserFromPasswordRecoveryPageTest() {
+        ChooseBrowser.initBrowser(Browsers.YANDEX);
+        setUp();
+        driver.get(Url.getRecoveryPasswordPageUrl());
+
+        passwordRecoveryPage.waitForH2Text();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        passwordRecoveryPage.clickEnterAccountLink();
+        loginPage.login(email, password);
+
+    }
+
+    @Test
+    public void loginUserFromRegistrationPageTest() {
+        ChooseBrowser.initBrowser(Browsers.YANDEX);
+        setUp();
+        driver.get(Url.getRegistrationPageUrl());
+
+        registrationPage.h2TextWait();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(3));
+        driver.manage().window().setSize(new Dimension(1920, 1080));
+        registrationPage.pressLoginButton();
+        loginPage.login(email, password);
+
+
     }
 
     @After

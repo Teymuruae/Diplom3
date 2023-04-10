@@ -41,7 +41,7 @@ public class PasswordRecoveryPage {
 
     public void waitBeforeClick(WebElement element) {
         new WebDriverWait(driver, Duration.ofSeconds(8))
-                .until(ExpectedConditions.elementToBeClickable(element));
+                .until(ExpectedConditions. elementToBeClickable(element));
 
     }
 }

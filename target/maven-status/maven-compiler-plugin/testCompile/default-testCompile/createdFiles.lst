@@ -1,5 +1,10 @@
-stellarburgertests\PerehodyKRazdelamTest.class
+api\EndPoints.class
+stellarburgertests\UserRegistrationNegativeTest.class
+api\CreateUserRequest.class
+api\UserMethods.class
 stellarburgertests\UserAccountTest.class
 stellarburgertests\UserLoginTest.class
 stellarburgertests\HeaderButtonsToMainPageClickTest.class
-stellarburgertests\UserRegistrationTest.class
+stellarburgertests\PerehodyKRazdelamTest.class
+api\Spec.class
+stellarburgertests\UserRegistrationPositiveTest.class

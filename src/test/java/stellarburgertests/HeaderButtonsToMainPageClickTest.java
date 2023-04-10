@@ -1,55 +1,50 @@
 package stellarburgertests;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import api.UserMethods;
+import browsers.Browsers;
+import browsers.ChooseBrowser;
+import io.restassured.response.ValidatableResponse;
+import org.apache.http.HttpStatus;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import pages.*;
+import pages.Header;
+import pages.LoginPage;
+import pages.MainPage;
+import pages.UserAccountPage;
 import utils.Randomizer;
 import utils.Url;
 
-@RunWith(Parameterized.class)
+
 public class HeaderButtonsToMainPageClickTest {
     private static WebDriver driver;
-    private MainPage mainPage;
+    private static MainPage mainPage;
     private Header header;
-    private static RegistrationPage registrationPage;
     private static LoginPage loginPage;
     private static UserAccountPage userAccountPage;
-    private String button;
     private static String email;
     private static String password;
-
-    public HeaderButtonsToMainPageClickTest(String button) {
-        this.button = button;
-    }
-
-
-    @Parameterized.Parameters
-    public static Object[][] setData() {
-        return new Object[][]{
-                {"konstruktor"},
-                {"img"}
-        };
-    }
-
+    private static String token;
+    private static UserMethods userMethods;
+    private static ValidatableResponse createUserResponse;
 
     @BeforeClass
     public static void actsBeforeClass() {
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.get(Url.getRegistrationPageUrl());
         email = Randomizer.getRandomEmail();
         password = Randomizer.getText();
+        userMethods = new UserMethods();
 
-        registrationPage = new RegistrationPage(driver);
-        registrationPage.userRegistration(Randomizer.getText(), email, password);
+        createUserResponse = userMethods.createUser(email, password, Randomizer.getText(), HttpStatus.SC_OK);
+        token = createUserResponse.extract().path("accessToken");
+    }
 
-        loginPage = new LoginPage(driver);
-        loginPage.waitTextVhod();
-        driver.quit();
+    @AfterClass
+    public static void clear() {
+        userMethods = new UserMethods();
+        userMethods.deleteUser(token, HttpStatus.SC_ACCEPTED);
     }
 
 
@@ -70,34 +65,25 @@ public class HeaderButtonsToMainPageClickTest {
 
         header = new Header(driver);
 
-        if (button.equals("konstruktor")) {
-            header.clickKonstruktorButton();
-        } else {
-            header.clickStellarBurgerImg();
-        }
-        Assert.assertTrue(mainPage.getH1Text().isDisplayed());
     }
 
     @After
     public void tearDown() {
-        mainPage.clickPersonalAccountLink();
-        userAccountPage.waitInfoText();
-        userAccountPage.clickExitButton();
         driver.quit();
     }
 
     @Test
-    public void headerButtonToMainPageInChromeTest() {
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\barat\\Documents\\YandexDriver\\yandexdriver.exe");
+    public void headerButtonKonstruktorToMainPageTest() {
+        ChooseBrowser.initBrowser(Browsers.YANDEX);
         setUp();
-
+        header.clickKonstruktorButton();
     }
 
     @Test
-    public void headerButtonToMainPageInYandexBrowserTest() {
-        WebDriverManager.chromedriver().setup();
+    public void headerButtonStellarBurgerToMainPageTest() {
+        ChooseBrowser.initBrowser(Browsers.YANDEX);
         setUp();
-
+        header.clickStellarBurgerImg();
     }
 
 

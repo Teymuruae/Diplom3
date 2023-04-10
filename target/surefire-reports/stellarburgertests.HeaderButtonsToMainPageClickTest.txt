@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: stellarburgertests.HeaderButtonsToMainPageClickTest
 -------------------------------------------------------------------------------
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 61.615 s - in stellarburgertests.HeaderButtonsToMainPageClickTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 37.791 s - in stellarburgertests.HeaderButtonsToMainPageClickTest

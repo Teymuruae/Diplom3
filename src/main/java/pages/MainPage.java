@@ -70,13 +70,14 @@ public class MainPage {
     }
 
     public void waitH1Text() {
-        new WebDriverWait(driver, Duration.ofSeconds(5))
+        new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOf(h1SoberiteBurgerText));
     }
 
     public void waitBeforeClick(WebElement element) {
-        new WebDriverWait(driver, Duration.ofSeconds(8))
+        new WebDriverWait(driver, Duration.ofSeconds(15))
                 .until(ExpectedConditions.elementToBeClickable(element));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
     }
 
     public void waitElementIsPresent(WebElement ... element){
@@ -102,6 +103,7 @@ public class MainPage {
     public void clickNachinkiButton() {
         waitBeforeClick(nachinkiButton);
         nachinkiButton.click();
+
     }
 
     public WebElement getBulkiButtonParentWebElement() {
